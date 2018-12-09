@@ -1,15 +1,38 @@
+'''
+This module contains all necessary functions to scrape
+both base info (description, release date, etc.) and
+advanced info (versions, add-ons, etc.) for a video game
+provided a BeautifulSoup object containing the corresponding
+main respectively data page.
+'''
+
 import re
 
 
 def get_name(info_page):
+    '''
+    Returns the title of the game from both base and advanced info page.
+
+    :param info_page: BeautifulSoup object containing the base/advanced info page
+    '''
     return info_page.find('h1', class_='page-title').text
 
 
 def get_description(base_info_page):
+    '''
+    Returns the description of the game from the base info page.
+
+    :param base_info_page: BeautifulSoup object containing the baseinfo page
+    '''
     return base_info_page.find('div', class_='desc').text
 
 
 def get_user_ratings(base_info_page):
+    '''
+    Returns the user ratings (owned, rating, difficulty, length, completed) from the base info page.
+
+    :param base_info_page: BeautifulSoup object containing the base info page
+    '''
     result = dict()
     user_ratings_fieldsets = base_info_page.find_all('fieldset', class_='mygames_section')
 
@@ -41,6 +64,14 @@ def get_user_ratings(base_info_page):
 
 
 def get_base_info(base_info_page):
+    '''
+    Returns the basic info on the game provided on the base info page
+    (platforms, developer, release date, genre, franchise, metacritic score, ESRB rating).
+    Franchise, ESRB rating and metacritic score can be missing, the latter two especially
+    when data of older games is scraped.
+
+    :param base_info_page: BeautifulSoup object containing the base info page
+    '''
     result = dict()
     base_info = base_info_page.find('div', class_='pod_gameinfo').find('ul')
         
@@ -88,6 +119,12 @@ def get_base_info(base_info_page):
 
 
 def get_full_base_info(base_info_page):
+    '''
+    Returns the full base info on the game provided on the base info page
+    (base info, description, user ratings, name).
+
+    :param base_info_page: BeautifulSoup object containing the base info page
+    '''
     result = get_base_info(base_info_page)
     result['Description'] = get_description(base_info_page)
     result['User-Ratings'] = get_user_ratings(base_info_page)
@@ -97,6 +134,12 @@ def get_full_base_info(base_info_page):
 
 
 def get_advanced_info(advanced_info_page):
+    '''
+    Returns the full info on the game provided on the advanced info page.
+    (title data, versions, add-ons)
+
+    :param advanced_info_page: BeautifulSoup object containing the advanced info page
+    '''
     result = dict()
     
     result['Title-Data'] = get_title_data(advanced_info_page)
@@ -107,6 +150,16 @@ def get_advanced_info(advanced_info_page):
 
 
 def get_title_data(advanced_info_page):
+    '''
+    Returns the title data of the game provided on the advanced info page
+    (developer, genres, ESRB-descriptors, Wikipedia (EN) link, multiplayers, etc. ).
+    The retreived data can differ from game to game given on the data provided.
+
+    Example: Tales of Berseria: Genre, Developer, Local Players, Online Players, Wiki
+    The Sims: Genre, Developer, ESRB-Descriptors, Wiki
+
+    :param advanced_info_page: BeautifulSoup object containing the advanced info page
+    '''
     result = dict()
     title_data = advanced_info_page.find('div', 'pod_titledata')
 
@@ -126,6 +179,11 @@ def get_title_data(advanced_info_page):
 
 
 def get_versions(advanced_info_page):
+    '''
+    Returns all published versions of the game (region, publisher, product id, barcode, rating)
+
+    :param advanced_info_page: BeautifulSoup object containing the advanced info page
+    '''
     result = list()
 
     regions = advanced_info_page.find_all('td', class_='cregion')
@@ -151,6 +209,11 @@ def get_versions(advanced_info_page):
 
 
 def get_dlc(advance_info_page):
+    '''
+    Returns all released add-ons/DLCs of the game (name, gamefaqs-link).
+
+    :param advanced_info_page: BeautifulSoup object containing the advanced info page
+    '''
     result = list()
     dlcs = advance_info_page.find('div', id='dlc')
 
@@ -163,6 +226,12 @@ def get_dlc(advance_info_page):
 
 
 def __get_metacritic_score(base_info_pod):
+    '''
+    Returns the average metacritic score and the number of reviews.
+
+    :param base_info_pod: BeautifulSoup object containing the base info box provided in the upper
+    right of the base info page.
+    '''
     result = dict()
     metacritic = base_info_pod.find('div', class_='review_link')
 
@@ -188,6 +257,12 @@ def __get_metacritic_score(base_info_pod):
 
 
 def __get_esrb_rating(base_info_pod):
+    '''
+    Returns the ESRB rating and the description of the rating.
+
+    :param base_info_pod: BeautifulSoup object containing the base info box provided in the upper
+    right of the base info page.
+    '''
     result = dict()
 
     if base_info_pod:

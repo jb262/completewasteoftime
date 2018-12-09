@@ -1,7 +1,10 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\completewasteoftime",
+    "\\gamefaqs",
+    "\\helper"
   ],
-  "SelectedNode": "\\LICENSE",
+  "SelectedNode": "\\completewasteoftime\\completewasteoftime.py",
   "PreviewInSolutionExplorer": false
 }

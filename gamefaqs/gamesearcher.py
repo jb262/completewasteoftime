@@ -1,4 +1,16 @@
+'''
+This module contains functions to perform a search for a game on gamefaqs.
+'''
+
 def parse_search_results(bs):
+    '''
+    Parses a given search result page and returns a list with the first 20 search results.
+
+    :param bs: BeautifulSoup object containing the search page with its results.
+    
+    :raise StopIteration: If the search page contains an error element, there were no further games found,
+    signaling the iterator that calls this method that the end of the Iteration has been reached.
+    '''
     search_result = list()
 
     if bs.find('div', class_='error'):

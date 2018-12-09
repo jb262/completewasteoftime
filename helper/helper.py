@@ -1,13 +1,31 @@
+'''
+This module conatins helper functions for recurring tasks in the main module.
+'''
+
 import requests
 from bs4 import BeautifulSoup
 
 def get_response(url, headers=None):
+    '''
+    Performs a request for the specified URL with headers if specified.
+
+    :param url: URL to perform the request on.
+    :param headers: Header of the request. If none is specified, the standard requests header will be used.
+    In this case, the requests will end wit status code 403.
+    '''
     if headers:
         return requests.get(url, headers=headers)
     else:
         return requests.get(url)
 
 def gameinfodecorator(info_page):
+    '''
+    Decorator to validate the request and perform data retreival on the base and advanced info pages.
+
+    :param info_page: Specifies, if the base or the advanced info page shall be used for the request.
+
+    :raise RuntimeError: If there is no request for the specified info page or the request failed, a RuntimeError will be raised.
+    '''
     def get_infodecorator(func):
         def wrapper(*args):
             result = dict()
