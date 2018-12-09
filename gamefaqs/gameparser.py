@@ -3,7 +3,7 @@ This module contains all necessary functions to scrape
 both base info (description, release date, etc.) and
 advanced info (versions, add-ons, etc.) for a video game
 provided a BeautifulSoup object containing the corresponding
-main respectively data page.
+base/advance data page.
 '''
 
 import re
@@ -31,7 +31,16 @@ def get_user_ratings(base_info_page):
     '''
     Returns the user ratings (owned, rating, difficulty, length, completed) from the base info page.
 
-    :param base_info_page: BeautifulSoup object containing the base info page
+    The user ratings are stored in a fieldset having the class mygames_section.
+    The title of the single categories is stored in div-containers, conveniently having the class
+    subsection-title. Besides the category title, this element also stores the rating itself.
+    The votes on which the rating is based is stored in a separate paragraph with the class rate.
+    The owned-statistic is the only entry without a corresponding votes-statistic, thus resulting
+    in an error, if the text-attribute is accessed. This case is caught by assigning None to the
+    votes in this case. There is also a disabled element, which can be accessed by signed in users.
+    This element is skipped as it does not contain any relevant info.
+
+    :param base_info_page: BeautifulSoup object containing the base info page.
     '''
     result = dict()
     user_ratings_fieldsets = base_info_page.find_all('fieldset', class_='mygames_section')
@@ -44,8 +53,7 @@ def get_user_ratings(base_info_page):
         for user_rating_fieldset in user_ratings_fieldsets:
             if not 'disabled' in user_rating_fieldset.attrs:
                 subsection = user_rating_fieldset.find('div', class_='subsection-title')
-                category, _ = subsection.text.split(':')
-                rating = subsection.find('div', class_='rating').text
+                category, rating = subsection.text.split(':')
                 try:
                     vote = subsection.find('p', 'rate').text
                 except AttributeError:
@@ -69,6 +77,15 @@ def get_base_info(base_info_page):
     (platforms, developer, release date, genre, franchise, metacritic score, ESRB rating).
     Franchise, ESRB rating and metacritic score can be missing, the latter two especially
     when data of older games is scraped.
+
+    This data is stored in a div container at the upper right corner, having the class
+    pod_gameinfo. Inside this container is an unordered list. The list itself has a very heterogenic
+    structure: The core platform, ESRB rating and Metacritic score have their own unique classes,
+    while the other li-elements do not. The developing/publishing company and, if provided, the number
+    of DLCs/Add-Ons do not even have a label in contrast to release date, other platforms and franchise,
+    resulting in this long if-elif-statement.
+    In case of the ESRB-rating and the Metacritic score, the obtained result sets are passed to dedicated
+    parsing methods.
 
     :param base_info_page: BeautifulSoup object containing the base info page
     '''
@@ -123,6 +140,9 @@ def get_full_base_info(base_info_page):
     Returns the full base info on the game provided on the base info page
     (base info, description, user ratings, name).
 
+    This method simply calls all available operations on the base info page
+    and stores the results in a dictionary.
+
     :param base_info_page: BeautifulSoup object containing the base info page
     '''
     result = get_base_info(base_info_page)
@@ -137,6 +157,9 @@ def get_advanced_info(advanced_info_page):
     '''
     Returns the full info on the game provided on the advanced info page.
     (title data, versions, add-ons)
+
+    This method simply calls all available perations on the advanced info page
+    and stores the results in a dictionary.
 
     :param advanced_info_page: BeautifulSoup object containing the advanced info page
     '''
@@ -153,10 +176,15 @@ def get_title_data(advanced_info_page):
     '''
     Returns the title data of the game provided on the advanced info page
     (developer, genres, ESRB-descriptors, Wikipedia (EN) link, multiplayers, etc. ).
-    The retreived data can differ from game to game given on the data provided.
+    The retrieved data can differ from game to game given the data provided.
 
     Example: Tales of Berseria: Genre, Developer, Local Players, Online Players, Wiki
     The Sims: Genre, Developer, ESRB-Descriptors, Wiki
+
+    The title data is stored in description list, which itself is nested into a
+    div-container with the unique class pod-titledata.
+    The tags and contents are parsed separately and stored as keys and values in
+    a dictionary.
 
     :param advanced_info_page: BeautifulSoup object containing the advanced info page
     '''
@@ -180,7 +208,14 @@ def get_title_data(advanced_info_page):
 
 def get_versions(advanced_info_page):
     '''
-    Returns all published versions of the game (region, publisher, product id, barcode, rating)
+    Returns all published versions of the game (region, publisher, product ID, barcode, rating).
+
+    The data is stored in a table without any unique identifiers or classes. The cells in a single
+    table row all have unique classes corresponding to their contents, except for the product ID and
+    barcode cells sharing the same class. This can be bypassed by the simple rule that all elements
+    in the result set with an even index are product IDs and all elements with an odd index are
+    barcodes. This rule is valid since, even if there is no product ID or barcode provided,
+    parsing returns None as their values, guaranteeing element at all indexes.
 
     :param advanced_info_page: BeautifulSoup object containing the advanced info page
     '''
@@ -212,6 +247,10 @@ def get_dlc(advance_info_page):
     '''
     Returns all released add-ons/DLCs of the game (name, gamefaqs-link).
 
+    The DLC section is very incomplete. A lot of extensions to the game are missing (example:
+    The Sims actually having at least 3,013,553 purchasable add-ons, while only having two according
+    to gamefaqs). The data itself is stored in a table with the ID dlc, making the parsing straightforward.
+
     :param advanced_info_page: BeautifulSoup object containing the advanced info page
     '''
     result = list()
@@ -228,6 +267,10 @@ def get_dlc(advance_info_page):
 def __get_metacritic_score(base_info_pod):
     '''
     Returns the average metacritic score and the number of reviews.
+
+    The score itself is stored in a div-container with the unique class score.
+    The total count of reviews needs to be retrieved from a link text below, from which
+    the actual number has to be extraxted using a regular expression.
 
     :param base_info_pod: BeautifulSoup object containing the base info box provided in the upper
     right of the base info page.
@@ -259,6 +302,10 @@ def __get_metacritic_score(base_info_pod):
 def __get_esrb_rating(base_info_pod):
     '''
     Returns the ESRB rating and the description of the rating.
+
+    The ESRB info is stored in a list entry (of the unordered list of base elements) with the
+    unique class esrb. While hidden behind the logo on the visible website, the actual rating and
+    its rating can easily be retrieved by a splitting its content on a -.
 
     :param base_info_pod: BeautifulSoup object containing the base info box provided in the upper
     right of the base info page.

@@ -101,15 +101,15 @@ class GameFAQs:
         '''
         Returns title info of the game, may vary.
 
-        Examples: Tales of Berseria: genre, developer, multiplayer, wiki
-        The Sims: genre, developer, ESRB-descriptors, wiki
+        Examples: Tales of Berseria: genre, developer, multiplayer, Wiki
+        The Sims: genre, developer, ESRB-descriptors, Wiki
         '''
         return gameparser.get_title_info
 
     @helper.gameinfodecorator('advanced')
     def get_versions(self):
         '''
-        Returns versions of the game, including region, publisher, product id, barcode, release date, rating if provided.
+        Returns versions of the game, including region, publisher, product ID, barcode, release date, rating if provided.
         '''
         return gameparser.get_versions
 

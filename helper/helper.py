@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 def get_response(url, headers=None):
     '''
-    Performs a request for the specified URL with headers if specified.
+    Performs a request for a given URL with headers if specified.
 
     :param url: URL to perform the request on.
     :param headers: Header of the request. If none is specified, the standard requests header will be used.
@@ -20,7 +20,11 @@ def get_response(url, headers=None):
 
 def gameinfodecorator(info_page):
     '''
-    Decorator to validate the request and perform data retreival on the base and advanced info pages.
+    Decorator to validate the request and perform data retrieval on the base and advanced info pages.
+
+    The wrapper simply checks, if the request executed successfully (status code 200). If so, a BeautifulSoup
+    instance for its response is created and the actual get-method executed. If not, an error is raised.
+    If the request for the respective info page is None, it also raises an error.
 
     :param info_page: Specifies, if the base or the advanced info page shall be used for the request.
 
