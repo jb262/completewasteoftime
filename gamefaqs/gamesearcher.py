@@ -6,10 +6,10 @@ def parse_search_results(bs):
     '''
     Parses a given search result page and returns a list with the first 20 search results.
 
-    The result page of displays the next 20 results of the search. It provides the name of the game
+    The result page displays the next 20 results of the search. It provides the name of the game
     in a div-container with the unique per row class sr-title, its developer/publisher if known,
     its genre and its release year in a div-container with the unique per row class sr-details, delimited
-    by commas. For some obsucre titles, the developer can be blank. It is also possible, that a developer/
+    by commas. For some obscure titles, the developer can be blank. It is also possible, that a developer/
     publisher has a comma in its name, so it has to be put together again after splitting the string by
     commas. The release year can also be the string value cancelled, making it not possible to convert
     it to an integer value.

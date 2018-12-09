@@ -81,7 +81,7 @@ def get_base_info(base_info_page):
     This data is stored in a div container at the upper right corner, having the class
     pod_gameinfo. Inside this container is an unordered list. The list itself has a very heterogenic
     structure: The core platform, ESRB rating and Metacritic score have their own unique classes,
-    while the other li-elements do not. The developing/publishing company and, if provided, the number
+    while the other list items do not. The developing/publishing company and, if provided, the number
     of DLCs/Add-Ons do not even have a label in contrast to release date, other platforms and franchise,
     resulting in this long if-elif-statement.
     In case of the ESRB-rating and the Metacritic score, the obtained result sets are passed to dedicated
@@ -215,7 +215,7 @@ def get_versions(advanced_info_page):
     barcode cells sharing the same class. This can be bypassed by the simple rule that all elements
     in the result set with an even index are product IDs and all elements with an odd index are
     barcodes. This rule is valid since, even if there is no product ID or barcode provided,
-    parsing returns None as their values, guaranteeing element at all indexes.
+    parsing returns None as their values, guaranteeing elements at all indexes.
 
     :param advanced_info_page: BeautifulSoup object containing the advanced info page
     '''
@@ -247,7 +247,7 @@ def get_dlc(advance_info_page):
     '''
     Returns all released add-ons/DLCs of the game (name, gamefaqs-link).
 
-    The DLC section is very incomplete. A lot of extensions to the game are missing (example:
+    The DLC section is very incomplete. A lot of extensions to the games are missing (example:
     The Sims actually having at least 3,013,553 purchasable add-ons, while only having two according
     to gamefaqs). The data itself is stored in a table with the ID dlc, making the parsing straightforward.
 
@@ -270,7 +270,7 @@ def __get_metacritic_score(base_info_pod):
 
     The score itself is stored in a div-container with the unique class score.
     The total count of reviews needs to be retrieved from a link text below, from which
-    the actual number has to be extraxted using a regular expression.
+    the actual number has to be extracted using a regular expression.
 
     :param base_info_pod: BeautifulSoup object containing the base info box provided in the upper
     right of the base info page.
@@ -303,7 +303,7 @@ def __get_esrb_rating(base_info_pod):
     '''
     Returns the ESRB rating and the description of the rating.
 
-    The ESRB info is stored in a list entry (of the unordered list of base elements) with the
+    The ESRB info is stored in a list entry (of the unordered list of base information) with the
     unique class esrb. While hidden behind the logo on the visible website, the actual rating and
     its rating can easily be retrieved by a splitting its content on a -.
 
