@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>041bb378-fb06-40b0-b1fd-9974104cfacf</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>completewasteoftime\completewasteoftime.py</StartupFile>
+    <StartupFile>completewasteoftime.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -21,19 +21,27 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="completewasteoftime\completewasteoftime.py" />
+    <Compile Include="completewasteoftime.py" />
     <Compile Include="gamefaqs\gameparser.py" />
     <Compile Include="gamefaqs\gamesearcher.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="gamefaqs\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="helper\decorators.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="helper\helper.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="helper\__init__.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="gamefaqs\" />
     <Folder Include="helper\" />
-    <Folder Include="completewasteoftime\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in

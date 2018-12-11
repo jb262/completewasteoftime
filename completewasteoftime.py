@@ -4,7 +4,7 @@ a readable format.
 '''
 
 import re
-from helper import helper
+from helper import helper, decorators
 from gamefaqs import gameparser, gamesearcher
 from bs4 import BeautifulSoup
 
@@ -60,28 +60,28 @@ class GameFAQs:
 
         return result
     
-    @helper.gameinfodecorator('base')
+    @decorators.gameinfodecorator('base')
     def get_full_base_info(self):
         '''
         Returns the full base info on the game.
         '''
         return gameparser.get_full_base_info
 
-    @helper.gameinfodecorator('advanced')
+    @decorators.gameinfodecorator('advanced')
     def get_full_advanced_info(self):
         '''
         Returns the full advanced info on the game.
         '''
         return gameparser.get_advanced_info
 
-    @helper.gameinfodecorator('base')
+    @decorators.gameinfodecorator('base')
     def get_description(self):
         '''
         Returns the description of the game.
         '''
         return gameparser.get_description
 
-    @helper.gameinfodecorator('base')
+    @decorators.gameinfodecorator('base')
     def get_base_info(self):
         '''
         Returns platforms, developer, release date of the game
@@ -89,14 +89,14 @@ class GameFAQs:
         '''
         return gameparser.get_base_info
 
-    @helper.gameinfodecorator('base')
+    @decorators.gameinfodecorator('base')
     def get_user_ratings(self):
         '''
         Returns user statistic of the game: owned, rating, difficulty, length, completed.
         '''
         return gameparser.get_user_ratings
 
-    @helper.gameinfodecorator('advanced')
+    @decorators.gameinfodecorator('advanced')
     def get_title_info(self):
         '''
         Returns title info of the game, may vary.
@@ -106,14 +106,14 @@ class GameFAQs:
         '''
         return gameparser.get_title_info
 
-    @helper.gameinfodecorator('advanced')
+    @decorators.gameinfodecorator('advanced')
     def get_versions(self):
         '''
         Returns versions of the game, including region, publisher, product ID, barcode, release date, rating if provided.
         '''
         return gameparser.get_versions
 
-    @helper.gameinfodecorator('advanced')
+    @decorators.gameinfodecorator('advanced')
     def get_dlc(self):
         '''
         Returns name and GameFAQs-link of all Add-Ons/DLCs
