@@ -5,7 +5,7 @@ a readable format.
 
 import re
 from helper import helper, decorators
-from gamefaqs import gameparser, gamesearcher
+from websites import gamefaqs
 from bs4 import BeautifulSoup
 
 
@@ -22,7 +22,7 @@ class GameFAQs:
         self.url = 'http://www.gamefaqs.com'
         self.headers = headers
 
-    def gamesession(self, path, base=True, advanced=True):
+    def gamesession(self, path, base=True, advanced=True, questions=False):
         '''
         Executes the requests for the base and advanced info pages and stores the response in instance variables.
 
@@ -38,6 +38,13 @@ class GameFAQs:
             self.response_advanced = helper.get_response(f'{self.url}{path}/data', self.headers)
         else:
             self.response_advanced = None
+
+        if questions:
+            self.response_questions_answered = helper.get_response(f'{self.url}{path}/answers/answered', self.headers)
+            self.response_questions_unresolved = helper.get_response(f'{self.url}{path}/answers/unresolved', self.headers)
+        else:
+            self.response_questions_answered = None
+            self.response_questions_unresolved = None
 
     def close(self):
         '''
@@ -60,43 +67,43 @@ class GameFAQs:
 
         return result
     
-    @decorators.gameinfodecorator('base')
+    @decorators.gameinfodecorator(decorators.Parameters.GameFAQs.BASE)
     def get_full_base_info(self):
         '''
         Returns the full base info on the game.
         '''
-        return gameparser.get_full_base_info
+        return gamefaqs.gameparser.get_full_base_info
 
-    @decorators.gameinfodecorator('advanced')
+    @decorators.gameinfodecorator(decorators.Parameters.GameFAQs.ADVANCED)
     def get_full_advanced_info(self):
         '''
         Returns the full advanced info on the game.
         '''
-        return gameparser.get_advanced_info
+        return gamefaqs.gameparser.get_advanced_info
 
-    @decorators.gameinfodecorator('base')
+    @decorators.gameinfodecorator(decorators.Parameters.GameFAQs.BASE)
     def get_description(self):
         '''
         Returns the description of the game.
         '''
-        return gameparser.get_description
+        return gamefaqs.gameparser.get_description
 
-    @decorators.gameinfodecorator('base')
+    @decorators.gameinfodecorator(decorators.Parameters.GameFAQs.BASE)
     def get_base_info(self):
         '''
         Returns platforms, developer, release date of the game
         and franchise, ESRB rating and Metacritc score if available.
         '''
-        return gameparser.get_base_info
+        return gamefaqs.gameparser.get_base_info
 
-    @decorators.gameinfodecorator('base')
+    @decorators.gameinfodecorator(decorators.Parameters.GameFAQs.BASE)
     def get_user_ratings(self):
         '''
         Returns user statistic of the game: owned, rating, difficulty, length, completed.
         '''
-        return gameparser.get_user_ratings
+        return gamefaqs.gameparser.get_user_ratings
 
-    @decorators.gameinfodecorator('advanced')
+    @decorators.gameinfodecorator(decorators.Parameters.GameFAQs.ADVANCED)
     def get_title_info(self):
         '''
         Returns title info of the game, may vary.
@@ -104,21 +111,50 @@ class GameFAQs:
         Examples: Tales of Berseria: genre, developer, multiplayer, Wiki
         The Sims: genre, developer, ESRB-descriptors, Wiki
         '''
-        return gameparser.get_title_info
+        return gamefaqs.gameparser.get_title_info
 
-    @decorators.gameinfodecorator('advanced')
+    @decorators.gameinfodecorator(decorators.Parameters.GameFAQs.ADVANCED)
     def get_versions(self):
         '''
         Returns versions of the game, including region, publisher, product ID, barcode, release date, rating if provided.
         '''
-        return gameparser.get_versions
+        return gamefaqs.gameparser.get_versions
 
-    @decorators.gameinfodecorator('advanced')
+    @decorators.gameinfodecorator(decorators.Parameters.GameFAQs.ADVANCED)
     def get_dlc(self):
         '''
         Returns name and GameFAQs-link of all Add-Ons/DLCs
         '''
-        return gameparser.get_dlc
+        return gamefaqs.gameparser.get_dlc
+
+    @decorators.gameinfodecorator(decorators.Parameters.GameFAQs.QUESTIONS_ANSWERED)
+    def get_answered_questions(self):
+        '''
+        Returns all answered questions sorted by topic, including link and answer count.
+        '''
+        return gamefaqs.gameparser.get_questions
+
+    @decorators.gameinfodecorator(decorators.Parameters.GameFAQs.QUESTIONS_UNRESOLVED)
+    def get_unresolved_questions(self):
+        '''
+        Returns all unresolved questions sorted by topic, including link and answer count.
+        '''
+        return gamefaqs.gameparser.get_questions
+
+    def get_all_questions(self):
+        return {
+            'Answered': self.get_answered_questions(),
+            'Unresolved': self.get_unresolved_questions()}
+
+    def get_answers(self, answer_link):
+        self.response_answers = helper.get_response(
+            f'{self.url}{answer_link}', self.headers)
+
+        @decorators.gameinfodecorator(decorators.Parameters.GameFAQs.ANSWERS)
+        def __get_answers(self, instance):
+            return gamefaqs.gameparser.get_question_details
+
+        return __get_answers(self, self)
 
     def search_game(self, game, max_pages=1):
         '''
@@ -140,7 +176,7 @@ class GameFAQs:
             if response.status_code == 200:
                 bs = BeautifulSoup(response.text, 'html.parser')
 
-                yield gamesearcher.parse_search_results(bs)
+                yield gamefaqs.gamesearcher.parse_search_results(bs)
             else:
                 response.close()
                 raise RuntimeError(f'GameFAQs search failed with status code {response.status_code}')
@@ -152,13 +188,13 @@ if __name__ == '__main__':
     '''
     gf = GameFAQs(headers={'User-Agent': 'Mozilla/5.0'})
     search_generator = gf.search_game('Monty Python\'s Complete Waste of Time')
-    
+
     search_result = next(search_generator)
 
     link = search_result[0]['Link']
     name = search_result[0]['Name']
 
-    gf.gamesession(link, advanced=False)
+    gf.gamesession(link, base=False, advanced=False, questions=True)
     print(name)
     print(gf.get_description())
 

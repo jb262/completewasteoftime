@@ -264,6 +264,82 @@ def get_dlc(advance_info_page):
     return result
 
 
+def get_questions(questions_page):
+    '''
+    Returns all asked questions either from the answered questions page or the unresolved questions page including
+    link and answer count.
+
+    Both answered and unresolved questions pages have the same structure: The information is stored in a container,
+    which holds the questions, the links to the questions and the answer count in tables with the classes qna_table
+    separated by topic (e.g. Enemy/Boss Help, Technical Help, etc.). The parsing is then straighforward.
+
+    If one of these sections does not have a header (i.e. a description for the topic), the section is skipped.
+    This line of code was only added for the sake of completeness, as this situation should not ever occur.
+    '''
+
+    result = list()
+    questions = questions_page.find_all('table', class_='qna_table')
+
+    if questions:
+        for topics in questions:
+            try:
+                topic = topics.find('th', class_='question').text
+            except AttributeError:
+                continue
+
+            topic_dict = {
+                'Topic': topic,
+                'Questions': list()}
+
+            questions_texts = topics.find_all('a', href=True)
+            answer_count = topics.find_all('td', class_='count')
+
+            for question, count in zip(questions_texts, answer_count):
+                topic_dict['Questions'].append({
+                    'Question': question.text,
+                    'Link': question['href'],
+                    'Count': int(count.text)})
+             
+            result.append(topic_dict)
+
+    return result
+
+
+def get_question_details(details_page):
+    '''
+    Returns question details (i.e. the full question text) and, if any, its answers including up- and downvotes.
+
+    The container with the left span of the main content has to be selected first, otherwise the aside element
+    will be parsed as well, leading to nonsensical results.
+    Both questions and answers are stored in containers with the class friend_info. There is no strict separation
+    between the question and its answers in the container´s body, both are stored in spans with the class name. The only
+    way to distinguish them is to check, if there are any up- or downvotes stored in the container as well.
+    '''
+
+    result = dict()
+    main_content = details_page.find('div', class_='main_content').find('div', class_='span8')
+    details = main_content.find_all('div', class_='friend_info')
+
+    if details:
+        answers = list()
+
+        for detail in details:
+            full_text = detail.find('span', class_='name').text
+            upvotes = detail.find('span', class_='up')
+            downvotes = detail.find('span', class_='down')
+
+            if not upvotes or not downvotes:
+                result['Full-Question'] = full_text
+            else:
+                answers.append({
+                    'Answer': full_text,
+                    'Upvotes': int(upvotes.text),
+                    'Downvotes': int(downvotes.text)})
+
+        result['Answers'] = answers
+
+    return result
+
 def __get_metacritic_score(base_info_pod):
     '''
     Returns the average metacritic score and the number of reviews.

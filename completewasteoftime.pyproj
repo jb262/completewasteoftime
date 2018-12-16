@@ -22,13 +22,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="completewasteoftime.py" />
-    <Compile Include="gamefaqs\gameparser.py" />
-    <Compile Include="gamefaqs\gamesearcher.py">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="gamefaqs\__init__.py">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="helper\decorators.py">
       <SubType>Code</SubType>
     </Compile>
@@ -38,10 +31,26 @@
     <Compile Include="helper\__init__.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="websites\gamefaqs\gameparser.py" />
+    <Compile Include="websites\gamefaqs\gamesearcher.py" />
+    <Compile Include="websites\gamefaqs\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="websites\howlongtobeat\gameparser.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="websites\howlongtobeat\gamesearcher.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="websites\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="gamefaqs\" />
+    <Folder Include="websites\gamefaqs\" />
     <Folder Include="helper\" />
+    <Folder Include="websites\" />
+    <Folder Include="websites\howlongtobeat\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
