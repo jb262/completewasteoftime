@@ -21,7 +21,7 @@ def parse_search_results(bs):
     :param bs: BeautifulSoup object containing the search page with its results.
     
     :raise StopIteration: If the search page contains an error element, there were no further games found,
-    signaling the iterator that calls this method that the end of the Iteration has been reached.
+    signaling the generator that calls this method that the end of the iteration has been reached.
     '''
     search_result = list()
 
@@ -55,7 +55,7 @@ def parse_search_results(bs):
         for console in details.find_all('div', class_='sr_product_name'):
             consoles.append(
                 {'Name': console.text,
-                    'Link': console.contents[0]['href']})
+                 'Link': console.contents[0]['href']})
                     
         search_result.append({
             'Name': direct_link.text,

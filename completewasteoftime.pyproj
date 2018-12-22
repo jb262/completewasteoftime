@@ -22,7 +22,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="completewasteoftime.py" />
-    <Compile Include="helper\decorators.py">
+    <Compile Include="websites\decorators.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="helper\helper.py">
@@ -33,16 +33,31 @@
     </Compile>
     <Compile Include="websites\gamefaqs\gameparser.py" />
     <Compile Include="websites\gamefaqs\gamesearcher.py" />
+    <Compile Include="websites\gamefaqs\model.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="websites\gamefaqs\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="websites\howlongtobeat\gameparser.py">
+    <Compile Include="websites\gamerankings\gamesearcher.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="websites\howlongtobeat\gamesearcher.py">
+    <Compile Include="websites\gamerankings\model.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="websites\gamerankings\reviewparser.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="websites\gamerankings\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="websites\model.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="websites\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="__init__.py">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
@@ -50,7 +65,7 @@
     <Folder Include="websites\gamefaqs\" />
     <Folder Include="helper\" />
     <Folder Include="websites\" />
-    <Folder Include="websites\howlongtobeat\" />
+    <Folder Include="websites\gamerankings\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
