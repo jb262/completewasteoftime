@@ -31,9 +31,9 @@ To do so, following steps must be executed:
   * ```get_dlc()```: returns the names and gamefaqs-links to the games add-ons (advanced)
   * ```get_full_advanced_info()```: returns all of the above having an advanced-tag
   * ```get_full_game_info()```: returns all the information mentioned above
-  * ```get_answered_questions()```: returns answered questions, ordered by topic, including answer count and link to their details pages (questions)
-  * ```get_unresolved_questions()```: returns unresolved questions, ordered by topic, including answer count and link to their details pages (questions)
-  * ```get_all_questions()```: returns all questions, ordered by topic, including answer count and link to their details pages (questions)
+  * ```get_answered_questions()```: returns answered questions, ordered by topic, including answer count and link to their details pages (questions_answered)
+  * ```get_unresolved_questions()```: returns unresolved questions, ordered by topic, including answer count and link to their details pages (questions_unresolved)
+  * ```get_all_questions()```: returns all questions, ordered by topic, including answer count and link to their details pages (questions_answered and questions_unresolved)
   * ```get_answers(link)```: returns the full question text and, if any, its answers including up- and downvotes (none required)
   
 * To close the requests, call the ```close()```-method of the GameFAQs instance. Example: ```gf.close()```
