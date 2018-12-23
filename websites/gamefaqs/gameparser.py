@@ -340,6 +340,31 @@ def get_question_details(details_page):
 
     return result
 
+def get_all_games(page):
+    '''
+    Returns a list of the next 100 games, including gamefaqs links, from an `all-games-page` of
+    a given console.
+    
+    The info is stored in the rows of a table with the unique class results. The relevant information
+    - name and gamefaqs link of the game - are stored in a table data cell with the unique class
+    rtitle. Thus parsing is straighforward.
+
+    :param page: `All-games-page` of a given console.
+    '''
+    result = list()
+    games = page.find('table', class_='results')
+    if games:
+        rows = games.find_all('td', class_='rtitle')
+        if rows:
+            for row in rows:
+                link = row.find('a', href=True)
+                link_text = link['href']
+                game = link.text
+                result.append({
+                    'Name': game,
+                    'Link': link_text})
+    return result
+
 def __get_metacritic_score(base_info_pod):
     '''
     Returns the average metacritic score and the number of reviews.

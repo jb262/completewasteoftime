@@ -23,7 +23,7 @@ def parse_search_results(page):
     iteration has been reached.
     '''
 
-    results = list()
+    result = list()
 
     error_pod = page.find('div', class_='pod')
     if error_pod:
@@ -53,7 +53,7 @@ def parse_search_results(page):
             year = information[2][-4:]
             reviews = reviews_re.match(information[3])
 
-            results.append({
+            result.append({
                 'Name': name,
                 'Console': console,
                 'Link': link_text,

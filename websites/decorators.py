@@ -3,6 +3,7 @@ This module contains decorators and a parameter class for them.
 '''
 
 import re
+import itertools
 from bs4 import BeautifulSoup
 from helper import helper
 
@@ -67,6 +68,44 @@ def gamesearchdecorator(url):
     return get_searchdecorator
 
 
+def allgamesdecorator(console):
+    '''
+    Decorator to retrieve all games for a given console, including gamefaqs links.
+
+    :param console: Platform, for which all games should be retrieved.
+    :raise RuntimeError: If the request for the `all-games-page` fails, a RuntimeError will be raised,
+    returning the error code of the failed request.
+    :raise RuntimeError: If the games lst is empty, a RuntimeError will be raised, telling the user that 
+    no games for the specified console were found.
+    '''
+    def get_allgamesdecorator(func):
+        def wrapper(*args):
+            games = list()
+            page = 0
+            for _ in itertools.repeat(None):
+                url = Parameters.GameFAQs.ALL_GAMES.format(
+                    args[0].url, console, page)
+                response = helper.get_response(url, args[0].headers)
+
+                if response.status_code == 200:
+                    bs = BeautifulSoup(response.text, 'html.parser')
+                    
+                    found_games = func(*args)(bs)
+
+                    if len(found_games) == 0:
+                        break
+                    else:
+                        games += found_games
+                        page += 1
+                else:
+                    response.close()
+                    raise RuntimeError(f'Request failed with status code {response.status_code}.')
+            if len(games) == 0:
+                raise RuntimeError(f'No games for \'{console}\' found.')
+            return games
+        return wrapper
+    return get_allgamesdecorator
+
 class Parameters:
     '''
     Parameter class, which holds the strings which are passed to the above decorators.
@@ -82,6 +121,7 @@ class Parameters:
         QUESTIONS_UNRESOLVED = 'response_questions_unresolved'
         ANSWERS = 'response_answers'
         SEARCH_URL = '{}/search?game={}&page={}'
+        ALL_GAMES = '{}/{}/category/999-all?page={}'
 
     class Gamerankings:
         '''

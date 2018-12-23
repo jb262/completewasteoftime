@@ -8,7 +8,6 @@ from helper import helper
 from websites.gamefaqs import gamesearcher, gameparser
 from websites.model import Website
 from websites import decorators
-from bs4 import BeautifulSoup
 
 
 class GameFAQs(Website):
@@ -157,6 +156,20 @@ class GameFAQs(Website):
             return gameparser.get_question_details
 
         return __get_answers(self, self)
+
+    def get_all_games(self, console):
+        '''
+        Returns all games, including gamefaqs link, for a given console.
+
+        :param console: The console, for which all games should be retrieved. Warning:
+        The console given must match the url-path on gamefaqs.com, e.g. if all games for
+        the Wii U should be returned, the parameter must have the value ´wii-u´, for the
+        XBOX 360 it must equal ´xbox360´.
+        '''
+        @decorators.allgamesdecorator(console)
+        def get_all_games(self):
+            return gameparser.get_all_games
+        return get_all_games(self)
 
     def search_game(self, game, max_pages=1):
         '''

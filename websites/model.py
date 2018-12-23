@@ -10,12 +10,15 @@ from helper import helper
 
 class Website(ABC):
     '''
-    Initializes an object of the Website class.
-    
-    :param headers: Dictionary, containing the key User-Agent.
+    Template class for implementing new gaming website models.
     '''
     @abstractmethod
     def __init__(self, headers=None):
+        '''
+        Initializes an object of the Website class.
+    
+        :param headers: Dictionary, containing the key User-Agent.
+        '''
         self.headers = headers
 
 
